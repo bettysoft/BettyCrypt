@@ -8,7 +8,7 @@
 #include "crypt.h"
 
 
-std::string intToHex(const int i){
+std::string intToHex(const unsigned short int i){
 	std::ostringstream strHex;
 	strHex << std::hex << std::setfill('0') << std::setw(2) << i;
 	return strHex.str();
@@ -21,14 +21,13 @@ int HexToInt(const char hex1, const char hex2){
 	else if (hex1 >= 'a' && hex1 <= 'z') i = 16 * (int (hex1) - ('a'-10));
 
 	if (hex2 >= '0' && hex2 <= '9') i += int (hex2) - '0';
-	else if (hex2 >= '65' && hex2 <= 'F') i += int (hex2) - ('A'-10);
+	else if (hex2 >= 'A' && hex2 <= 'F') i += int (hex2) - ('A'-10);
 	else if (hex2 >= 'a' && hex2 <= 'z') i += int (hex2) - ('a'-10);
 
 	return i;
 };
 
 unsigned long long int Crypt::fileSize(const char *path){
-	SetFileAttributes(path,FILE_ATTRIBUTE_NORMAL);
 	std::ifstream ifOpenReadLength(path,std::ios::binary);
 	ifOpenReadLength.seekg(0,std::ios::end);
 	unsigned long long int iFileSize = ifOpenReadLength.tellg();
