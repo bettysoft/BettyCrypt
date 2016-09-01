@@ -213,26 +213,25 @@ void BettyCryptModules::AES_128::invCipher(BYTE in[4*Nb], BYTE out[4*Nb]){
 		for (int j = 0; j < Nb; j++) out[i*4+j] = state[j][i];
 }
 
-bool BettyCryptModules::AES_128::decrypt(const char *oldPath, const char *newPath, const char *pass, const HWND hParent){
+bool BettyCryptModules::AES_128::decrypt(const char *srcPath, const char *dstPath, const char *pass, std::function<void(const unsigned int)> update){
 	unsigned short int iPercent = 0;
 	unsigned long long int iCharCounter = 0;
-	unsigned long long int iFileSize = fileSize(oldPath);
+	unsigned long long int iFileSize = fileSize(srcPath);
 	short int iPadding = 0;
 	BYTE BKey[BlockSize], BIn[BlockSize], BOut[BlockSize];
 	char chIn[BlockSize*2];
-	int iCount = 0;
 
 	for (int i = 0; i < BlockSize; i++) BKey[i] = 0;
 	for (int i = 0; i < strlen(pass); i++) BKey[i] = BYTE (pass[i]);
 	keyExpansion(BKey, Nk);
 
-	readFile.open(oldPath,std::ios::binary);
-	if (strcmp(readCryptVersion(oldPath).c_str(),"20141229") >= 0){
+	readFile.open(srcPath,std::ios::binary);
+	if (strcmp(readCryptVersion(srcPath).c_str(),"20141229") >= 0){
 		readFile.seekg(10);
-		iPadding = readPadding(oldPath)%16;
+		iPadding = readPadding(srcPath)%16;
 	}
 	else readFile.seekg(8);
-	writeFile.open(newPath,std::ios::binary);
+	writeFile.open(dstPath,std::ios::binary);
 
 	readFile.get(chIn[0]);
 
@@ -256,9 +255,9 @@ bool BettyCryptModules::AES_128::decrypt(const char *oldPath, const char *newPat
 		else
 			for (int i = 0; i < BlockSize-iPadding; i++) writeFile << char (BOut[i]);
 
-		if (hParent != 0 && iPercent != (100*iCharCounter)/iFileSize){
+		if (iPercent != (100*iCharCounter)/iFileSize){
 			iPercent = (100*iCharCounter)/iFileSize;
-			SendMessage(hParent,PBM_SETPOS,iPercent,0);
+			update(iPercent);
 		};
 		readFile.get(chIn[0]);
 	};
@@ -269,10 +268,10 @@ bool BettyCryptModules::AES_128::decrypt(const char *oldPath, const char *newPat
 	return true;
 }
 
-bool BettyCryptModules::AES_128::encrypt(const char *oldPath, const char *newPath, const char *pass, const HWND hParent){
+bool BettyCryptModules::AES_128::encrypt(const char *srcPath, const char *dstPath, const char *pass, std::function<void(const unsigned int)> update){
 	unsigned short int iPercent = 0;
 	unsigned long long int iCharCounter = 0;
-	unsigned long long int iFileSize = fileSize(oldPath);
+	unsigned long long int iFileSize = fileSize(srcPath);
 	BYTE BKey[BlockSize], BIn[BlockSize], BOut[BlockSize];
 	char chIn[BlockSize];
 
@@ -280,8 +279,8 @@ bool BettyCryptModules::AES_128::encrypt(const char *oldPath, const char *newPat
 	for (int i = 0; i < strlen(pass); i++) BKey[i] = BYTE (pass[i]);
 	keyExpansion(BKey, Nk);
 
-	readFile.open(oldPath,std::ios::binary);
-	writeFile.open(newPath,std::ios::binary);
+	readFile.open(srcPath,std::ios::binary);
+	writeFile.open(dstPath,std::ios::binary);
 	writeFile << "20141229";//VER_DATE;
 	writeFile << intToHex(16 - (iFileSize%16)).c_str();
 
@@ -303,9 +302,9 @@ bool BettyCryptModules::AES_128::encrypt(const char *oldPath, const char *newPat
 		for (int i = 0; i < BlockSize; i++) writeFile << std::hex << std::setfill('0') << std::setw(2) << int (BOut[i]);
 
 		iCharCounter = readFile.tellg();
-		if (hParent != 0 && iPercent != (100*iCharCounter)/iFileSize){
+		if (iPercent != (100*iCharCounter)/iFileSize){
 			iPercent = (100*iCharCounter)/iFileSize;
-			SendMessage(hParent,PBM_SETPOS,iPercent,0);
+			update(iPercent);
 		};
 		readFile.get(chIn[0]);
 	};
