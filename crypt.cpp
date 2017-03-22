@@ -1,20 +1,20 @@
 //
 //  crypt.cpp
 //
-//  Created by BettySoft on 15.08.15.
-//  Copyright © 2015 BettySoft. All rights reserved.
+//  Created by Bettysoft on 15.08.15.
+//  Copyright © 2015 Bettysoft. All rights reserved.
 //
 
 #include "crypt.h"
 
 
-std::string intToHex(const unsigned short int i){
+std::string Bettysoft::Crypt::intToHex(const unsigned short int i){
 	std::ostringstream strHex;
 	strHex << std::hex << std::setfill('0') << std::setw(2) << i;
 	return strHex.str();
 };
 
-int HexToInt(const char hex1, const char hex2){
+int Bettysoft::Crypt::HexToInt(const char hex1, const char hex2){
 	int i = 0;
 	if (hex1 >= '0' && hex1 <= '9') i = 16 * (int (hex1) - '0');
 	else if (hex1 >= 'A' && hex1 <= 'F') i = 16 * (int (hex1) - ('A'-10));
@@ -27,7 +27,7 @@ int HexToInt(const char hex1, const char hex2){
 	return i;
 };
 
-unsigned long long int Crypt::fileSize(const char *path){
+unsigned long long int Bettysoft::Crypt::Crypt::fileSize(const char *path){
 	std::ifstream ifOpenReadLength(path,std::ios::binary);
 	ifOpenReadLength.seekg(0,std::ios::end);
 	unsigned long long int iFileSize = ifOpenReadLength.tellg();
@@ -36,7 +36,7 @@ unsigned long long int Crypt::fileSize(const char *path){
 	return iFileSize;
 };
 
-int Crypt::readPadding(const char *path){
+int Bettysoft::Crypt::Crypt::readPadding(const char *path){
 	std::ifstream ifOpenReadVersion(path,std::ios::binary);
 	ifOpenReadVersion.seekg(8,std::ios::beg);
 	char chPadding[3];
@@ -46,7 +46,7 @@ int Crypt::readPadding(const char *path){
 	return HexToInt(chPadding[0],chPadding[1]);
 };
 
-std::string Crypt::readCryptVersion(const char *path){
+std::string Bettysoft::Crypt::Crypt::readCryptVersion(const char *path){
 	std::ifstream ifOpenReadVersion(path,std::ios::binary);
 	ifOpenReadVersion.seekg(0,std::ios::beg);
 	char chVersionInFile[9];

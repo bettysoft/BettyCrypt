@@ -1,8 +1,8 @@
 //
 //  crypt.h
 //
-//  Created by BettySoft on 15.08.15.
-//  Copyright © 2015 BettySoft. All rights reserved.
+//  Created by Bettysoft on 15.08.15.
+//  Copyright © 2015 Bettysoft. All rights reserved.
 //
 
 #ifndef H_FILE_CRYPT
@@ -17,6 +17,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+
+namespace Bettysoft {
+namespace Crypt {
 
 typedef unsigned char BYTE;
 
@@ -35,5 +38,8 @@ public:
 	static int readPadding(const char *path);
 	static std::string readCryptVersion(const char *path);
 };
+
+}
+}
 
 #endif
