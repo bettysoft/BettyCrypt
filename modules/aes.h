@@ -1,8 +1,8 @@
 //
 //  aes.h
 //
-//  Created by BettySoft on 27.07.15.
-//  Copyright © 2015 BettySoft. All rights reserved.
+//  Created by Bettysoft on 27.07.15.
+//  Copyright © 2015 Bettysoft. All rights reserved.
 //
 
 #ifndef H_FILE_AES_128
@@ -19,7 +19,9 @@
 #include <sys/types.h>
 
 
-namespace BettyCryptModules{
+namespace Bettysoft {
+namespace Crypt {
+namespace Modules {
 
 class AES_128 : public Crypt{
 private:
@@ -46,6 +48,8 @@ public:
 	bool encrypt(const char *srcPath, const char *dstPath, const char *pass, std::function<void(const unsigned int)> update);
 };
 
-};
+}
+}
+}
 
 #endif

@@ -1,14 +1,14 @@
 //
 //  aes.cpp
 //
-//  Created by BettySoft on 27.07.15.
-//  Copyright © 2015 BettySoft. All rights reserved.
+//  Created by Bettysoft on 27.07.15.
+//  Copyright © 2015 Bettysoft. All rights reserved.
 //
 
 #include "aes.h"
 
 
-BYTE BettyCryptModules::AES_128::Rcon[256] = {
+Bettysoft::Crypt::BYTE Bettysoft::Crypt::Modules::AES_128::Rcon[256] = {
 	0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 
 	0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 
 	0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 
@@ -27,7 +27,7 @@ BYTE BettyCryptModules::AES_128::Rcon[256] = {
 	0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d
 };
 
-BYTE BettyCryptModules::AES_128::SBox[256] = {
+Bettysoft::Crypt::BYTE Bettysoft::Crypt::Modules::AES_128::SBox[256] = {
 	0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
 	0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
 	0xB7, 0xFD, 0x93, 0x26, 0x36, 0x3F, 0xF7, 0xCC, 0x34, 0xA5, 0xE5, 0xF1, 0x71, 0xD8, 0x31, 0x15,
@@ -46,7 +46,7 @@ BYTE BettyCryptModules::AES_128::SBox[256] = {
 	0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16
 };
 
-BYTE BettyCryptModules::AES_128::InvSBox[256] = {
+Bettysoft::Crypt::BYTE Bettysoft::Crypt::Modules::AES_128::InvSBox[256] = {
 	0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB,
 	0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87, 0x34, 0x8E, 0x43, 0x44, 0xC4, 0xDE, 0xE9, 0xCB,
 	0x54, 0x7B, 0x94, 0x32, 0xA6, 0xC2, 0x23, 0x3D, 0xEE, 0x4C, 0x95, 0x0B, 0x42, 0xFA, 0xC3, 0x4E,
@@ -66,25 +66,25 @@ BYTE BettyCryptModules::AES_128::InvSBox[256] = {
 };
 
 
-BYTE BettyCryptModules::AES_128::xmult(BYTE a){
+Bettysoft::Crypt::BYTE Bettysoft::Crypt::Modules::AES_128::xmult(BYTE a){
 	return ((a<<1)^(((a>>7)&1) * 0x1B));
 }
 
-BYTE BettyCryptModules::AES_128::Multiply(BYTE x, BYTE y){
+Bettysoft::Crypt::BYTE Bettysoft::Crypt::Modules::AES_128::Multiply(BYTE x, BYTE y){
 	return (((y&1)*x) ^ ((y>>1&1)*xmult(x)) ^ ((y>>2&1)*xmult(xmult(x))) ^ ((y>>3&1)*xmult(xmult(xmult(x)))) ^ ((y>>4&1)*xmult(xmult(xmult(xmult(x))))));
 }
 
-void BettyCryptModules::AES_128::addRoundKey(const unsigned short int round){
+void Bettysoft::Crypt::Modules::AES_128::addRoundKey(const unsigned short int round){
 	for (short int i = 0; i < 4; i++)
 		for (short int j = 0; j < 4; j++) state[j][i] ^= RoundKey[round*Nb*4 + i*Nb+j];
 }
 
-void BettyCryptModules::AES_128::subBytes(){
+void Bettysoft::Crypt::Modules::AES_128::subBytes(){
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++) state[i][j] = SBox[state[i][j]];
 }
 
-void BettyCryptModules::AES_128::shiftRows(){
+void Bettysoft::Crypt::Modules::AES_128::shiftRows(){
 	BYTE temp[4][Nb];
 	for (int i = 0; i < 4; i++)
 		for (short int j = 0; j < 4; j++) temp[i][j] = state[i][j];
@@ -94,7 +94,7 @@ void BettyCryptModules::AES_128::shiftRows(){
 	for (int i=0; i < Nb; i++) state[3][i] = temp[3][(i+3)%Nb];
 }
 
-void BettyCryptModules::AES_128::mixColumns(){
+void Bettysoft::Crypt::Modules::AES_128::mixColumns(){
 	BYTE a0, a1, a2, a3;
 	for (int i = 0; i < Nb; i++){
 		a0 = state[0][i];
@@ -109,12 +109,12 @@ void BettyCryptModules::AES_128::mixColumns(){
 	}
 }
 
-void BettyCryptModules::AES_128::invSubBytes(){
+void Bettysoft::Crypt::Modules::AES_128::invSubBytes(){
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++) state[i][j] = InvSBox[state[i][j]];
 }
 
-void BettyCryptModules::AES_128::invShiftRows(){
+void Bettysoft::Crypt::Modules::AES_128::invShiftRows(){
 	BYTE temp[4][Nb];
 	for (int i = 0; i < 4; i++)
 		for (short int j = 0; j < Nb; j++) temp[i][j] = state[i][j];
@@ -124,7 +124,7 @@ void BettyCryptModules::AES_128::invShiftRows(){
 	for (int i=0; i < Nb; i++) state[3][i] = temp[3][(i+1)%Nb];
 }
 
-void BettyCryptModules::AES_128::invMixColumns(){
+void Bettysoft::Crypt::Modules::AES_128::invMixColumns(){
 	BYTE a0, a1, a2, a3;
 	for (int i = 0; i < Nb; i++){
 		a0 = state[0][i];
@@ -139,7 +139,7 @@ void BettyCryptModules::AES_128::invMixColumns(){
 	}
 }
 
-void BettyCryptModules::AES_128::keyExpansion(BYTE key[4*Nk], const short int &Nk){
+void Bettysoft::Crypt::Modules::AES_128::keyExpansion(BYTE key[4*Nk], const short int &Nk){
 	BYTE temp[4], b;
 
 	for (short int i = 0; i < Nk; i++){
@@ -173,7 +173,7 @@ void BettyCryptModules::AES_128::keyExpansion(BYTE key[4*Nk], const short int &N
 	}
 }
 
-void BettyCryptModules::AES_128::cipher(BYTE in[4*Nb], BYTE out[4*Nb]){
+void Bettysoft::Crypt::Modules::AES_128::cipher(BYTE in[4*Nb], BYTE out[4*Nb]){
 	for (int i= 0; i < 4; i++)
 		for (int j = 0; j < Nb; j++) state[j][i] = in[i*4+j];
 
@@ -193,7 +193,7 @@ void BettyCryptModules::AES_128::cipher(BYTE in[4*Nb], BYTE out[4*Nb]){
 		for (int j = 0; j < Nb; j++) out[i*4+j] = state[j][i];
 }
 
-void BettyCryptModules::AES_128::invCipher(BYTE in[4*Nb], BYTE out[4*Nb]){
+void Bettysoft::Crypt::Modules::AES_128::invCipher(BYTE in[4*Nb], BYTE out[4*Nb]){
 	for (int i= 0; i < 4; i++)
 		for (int j = 0; j < Nb; j++) state[j][i] = in[i*4+j];
 
@@ -213,7 +213,7 @@ void BettyCryptModules::AES_128::invCipher(BYTE in[4*Nb], BYTE out[4*Nb]){
 		for (int j = 0; j < Nb; j++) out[i*4+j] = state[j][i];
 }
 
-bool BettyCryptModules::AES_128::decrypt(const char *srcPath, const char *dstPath, const char *pass, std::function<void(const unsigned int)> update){
+bool Bettysoft::Crypt::Modules::AES_128::decrypt(const char *srcPath, const char *dstPath, const char *pass, std::function<void(const unsigned int)> update){
 	unsigned short int iPercent = 0;
 	unsigned long long int iCharCounter = 0;
 	unsigned long long int iFileSize = fileSize(srcPath);
@@ -268,7 +268,7 @@ bool BettyCryptModules::AES_128::decrypt(const char *srcPath, const char *dstPat
 	return true;
 }
 
-bool BettyCryptModules::AES_128::encrypt(const char *srcPath, const char *dstPath, const char *pass, std::function<void(const unsigned int)> update){
+bool Bettysoft::Crypt::Modules::AES_128::encrypt(const char *srcPath, const char *dstPath, const char *pass, std::function<void(const unsigned int)> update){
 	unsigned short int iPercent = 0;
 	unsigned long long int iCharCounter = 0;
 	unsigned long long int iFileSize = fileSize(srcPath);
